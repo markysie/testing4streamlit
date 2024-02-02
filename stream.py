@@ -9,5 +9,5 @@ st.write("""테스트 중입니다.""")
 if st.button('관광지추천!'):
     st.write('뻥이야~')
 
-if st.button('Confirm'):
+if st.button('관광지 추천하러 가기'):
     st.write('Confirmed!')
