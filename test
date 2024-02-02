@@ -1,0 +1,51 @@
+%%writefile app.py
+
+import numpy as np
+import pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import GridSearchCV
+import streamlit as st
+
+# 데이터 불러오기
+df = pd.read_csv("/content/drive/MyDrive/경로추천/train test/merged_data.csv")
+
+# 데이터 정규화
+scaler = MinMaxScaler()
+df[["Y_COORD", "X_COORD"]] = scaler.fit_transform(df[["Y_COORD", "X_COORD"]])
+
+# Train과 Test 데이터로 나누기
+train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
+
+# 전처리 및 모델 학습
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', MinMaxScaler(), ["Y_COORD", "X_COORD", "AGE_GRP"])
+    ])
+
+knn = Pipeline([
+    ('preprocessor', preprocessor),
+    ('classifier', KNeighborsClassifier(n_neighbors=5))
+])
+
+knn.fit(train_df[["Y_COORD", "X_COORD", "AGE_GRP"]], train_df["VISIT_AREA_NM"])
+
+st.title('관광지 추천 앱')
+
+# 사용자 입력 받기
+user_location = st.slider('사용자 위치', 0.0, 1.0, (0.5, 0.5))
+user_age = st.slider('사용자 나이', 0, 100, 20)
+
+# 사용자 입력으로 추천 받기
+user_input = pd.DataFrame(np.array([user_location[0], user_location[1], user_age]).reshape(1, -1),
+                           columns=["Y_COORD", "X_COORD", "AGE_GRP"])
+user_input_transformed = pd.DataFrame(preprocessor.transform(user_input), columns=["Y_COORD", "X_COORD", "AGE_GRP"])
+user_recommendation = knn.predict(user_input_transformed)
+
+# 결과 출력
+st.subheader('사용자 추천 결과:')
+st.write(user_recommendation)
