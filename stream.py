@@ -9,7 +9,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import accuracy_score
 
 # Load data
-df = pd.read_csv("/content/drive/MyDrive/경로추천/train test/merged_data.csv")
+df = pd.read_csv("merged_data.csv")
 
 # Data normalization
 scaler = MinMaxScaler()
