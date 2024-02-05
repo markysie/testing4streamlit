@@ -8,7 +8,7 @@ import streamlit as st
 # from sklearn.model_selection import GridSearchCV, train_test_split
 # from sklearn.metrics import accuracy_score
 
- st.text("제주도 관광지추천")
+ st.title("제주도 관광지추천")
 
 # # Load data
 # df = pd.read_csv("merged_data.csv")
